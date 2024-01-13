@@ -3,5 +3,6 @@
 ## Data Structures
 
 - Linked List
+- Doubly Linked List
 
 ## Algorithms
