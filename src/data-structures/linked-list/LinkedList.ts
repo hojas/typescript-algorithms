@@ -76,19 +76,21 @@ export class LinkedList {
     const newNode = new LinkedListNode(value)
     let currentNode = this.head
     let currentIndex = 0
-    while (currentIndex !== index - 1) {
-      currentNode = currentNode && currentNode.next
+
+    while (currentNode && currentIndex !== index - 1) {
+      currentNode = currentNode.next
       currentIndex++
     }
 
     if (currentNode) {
       newNode.next = currentNode.next
       currentNode.next = newNode
-      return this
     }
     else {
-      return this.append(value)
+      this.append(value)
     }
+
+    return this
   }
 
   /**

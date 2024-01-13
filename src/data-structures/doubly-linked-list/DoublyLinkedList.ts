@@ -78,42 +78,32 @@ export class DoublyLinkedList {
   }
 
   /**
-   * delete a node from the doubly linked list
+   * insert a node to the doubly linked list
    * @param value
+   * @param index
    */
-  delete(value: number) {
+  insert(value: number, index: number) {
+    if (index <= 0)
+      return this.prepend(value)
+
+    const newNode = new DoublyLinkedListNode(value)
     let currentNode = this.head
-    let deletedNode: DoublyLinkedListNode | null = null
+    let currentIndex = 0
 
-    while (currentNode) {
-      // if head is the node to be deleted
-      if (currentNode?.value === value) {
-        if (this.head === currentNode) {
-          this.head = currentNode.next
-          if (this.head)
-            this.head.previous = null
-        }
-        // if tail is the node to be deleted
-        else if (this.tail === currentNode) {
-          this.tail = currentNode.previous
-          if (this.tail)
-            this.tail.next = null
-        }
-        // if node is in the middle
-        else {
-          if (currentNode.previous)
-            currentNode.previous.next = currentNode.next
-          if (currentNode.next)
-            currentNode.next.previous = currentNode.previous
-        }
-
-        deletedNode = currentNode
-      }
-
+    while (currentNode && currentIndex !== index - 1) {
       currentNode = currentNode.next
+      currentIndex++
     }
 
-    return deletedNode
+    if (currentNode) {
+      newNode.next = currentNode.next
+      currentNode.next = newNode
+    }
+    else {
+      this.append(value)
+    }
+
+    return this
   }
 
   /**
@@ -131,6 +121,49 @@ export class DoublyLinkedList {
     }
 
     return null
+  }
+
+  /**
+   * delete a node from the doubly linked list
+   * @param value
+   */
+  delete(value: number) {
+    let currentNode = this.head
+    let deletedNode: DoublyLinkedListNode | null = null
+
+    while (currentNode) {
+      // if head is the node to be deleted
+      if (currentNode?.value === value) {
+        if (this.head === currentNode) {
+          this.head = currentNode.next
+          if (this.head)
+            this.head.previous = null
+          else
+            this.tail = null
+        }
+        // if tail is the node to be deleted
+        else if (this.tail === currentNode) {
+          this.tail = currentNode.previous
+          if (this.tail)
+            this.tail.next = null
+          else
+            this.head = null
+        }
+        // if node is in the middle
+        else {
+          if (currentNode.previous)
+            currentNode.previous.next = currentNode.next
+          if (currentNode.next)
+            currentNode.next.previous = currentNode.previous
+        }
+
+        deletedNode = currentNode
+      }
+
+      currentNode = currentNode.next
+    }
+
+    return deletedNode
   }
 
   /**
