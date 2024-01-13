@@ -1,16 +1,12 @@
-/**
- * Linked List Node
- * @class LinkedListNode
- * @property {number} value
- * @property {LinkedListNode} next
- * @constructor
- * @param {number} value
- * @param {LinkedListNode} next
- */
 export class LinkedListNode {
   value: number
   next: LinkedListNode | null
 
+  /**
+   * LinkedListNode constructor
+   * @param value
+   * @param next
+   */
   constructor(value?: number, next?: LinkedListNode | null) {
     this.value = value === undefined ? 0 : value
     this.next = next === undefined ? null : next
@@ -21,19 +17,13 @@ export class LinkedListNode {
   }
 }
 
-/**
- * Linked List
- * @class LinkedList
- * @property {LinkedListNode} head
- * @property {LinkedListNode} tail
- * @constructor
- * @param {LinkedListNode} head
- * @param {LinkedListNode} tail
- */
 export class LinkedList {
   head: LinkedListNode | null
   tail: LinkedListNode | null
 
+  /**
+   * LinkedList constructor
+   */
   constructor() {
     this.head = null
     this.tail = null

@@ -41,7 +41,6 @@ describe('linkedList', () => {
     linkedList.insert(10, 9)
     expect(linkedList.head?.value).toBe(1)
     expect(linkedList.tail?.value).toBe(10)
-    console.log(linkedList.toString())
     expect(linkedList.toString()).toBe('1,4,2,3,10')
   })
 
