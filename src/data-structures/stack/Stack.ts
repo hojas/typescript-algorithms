@@ -1,7 +1,7 @@
-export class Stack {
-  private items: any[] = []
+export class Stack<T> {
+  private items: T[] = []
 
-  push(item: any) {
+  push(item: T) {
     this.items.push(item)
   }
 
@@ -25,7 +25,7 @@ export class Stack {
     this.items = []
   }
 
-  toString(callback?: (item: any) => string) {
+  toString(callback?: (item: T) => string) {
     const list = this.items.toReversed()
     if (callback)
       return list.map(callback).toString()
