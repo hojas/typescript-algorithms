@@ -2,7 +2,7 @@
  * Selection Sort
  *
  * O(n^2)
- * Stable
+ * Unstable
  *
  * @param nums
  * @returns sorted nums
