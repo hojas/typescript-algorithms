@@ -20,6 +20,7 @@
 7. [Heap Sort](https://github.com/hojas/typescript-algorithms/tree/main/src/2-algorithms/1-sort/7-heap-sort)
 8. [Counting Sort](https://github.com/hojas/typescript-algorithms/tree/main/src/2-algorithms/1-sort/8-counting-sort)
 9. [Bucket Sort](https://github.com/hojas/typescript-algorithms/tree/main/src/2-algorithms/1-sort/9-bucket-sort)
+10. [Radix Sort](https://github.com/hojas/typescript-algorithms/tree/main/src/2-algorithms/1-sort/10-radix-sort)
 
 ### Search
 
