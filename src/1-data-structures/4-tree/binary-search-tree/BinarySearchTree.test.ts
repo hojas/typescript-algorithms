@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { BinarySearchTree } from './BinarySearchTree'
 
 describe('binarySearchTree', () => {
-  it('should create binary search tree', () => {
+  it('should create binary search 4-tree', () => {
     const bst = new BinarySearchTree()
 
     expect(bst).toBeDefined()

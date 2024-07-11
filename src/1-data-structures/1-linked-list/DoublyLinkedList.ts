@@ -1,16 +1,14 @@
-export class DoublyLinkedListNode {
-  value: number
-  previous: DoublyLinkedListNode | null
-  next: DoublyLinkedListNode | null
+import type { LinkedListNode } from './LinkedList.ts'
 
-  constructor(
-    value: number,
-    next: DoublyLinkedListNode | null = null,
-    previous: DoublyLinkedListNode | null = null,
-  ) {
+export class DoublyLinkedListNode<T> {
+  value: T | null
+  previous: DoublyLinkedListNode<T> | null
+  next: DoublyLinkedListNode<T> | null
+
+  constructor(value: T | null = null) {
     this.value = value
-    this.next = next
-    this.previous = previous
+    this.previous = null
+    this.next = null
   }
 
   toString() {
@@ -18,172 +16,160 @@ export class DoublyLinkedListNode {
   }
 }
 
-export class DoublyLinkedList {
-  head: DoublyLinkedListNode | null
+export class DoublyLinkedList<T> {
+  head: DoublyLinkedListNode<T>
+  tail: DoublyLinkedListNode<T>
+  size: number
 
-  constructor(head = null) {
-    this.head = head
+  constructor() {
+    this.head = new DoublyLinkedListNode()
+    this.tail = new DoublyLinkedListNode()
+    this.head.next = this.tail
+    this.tail.previous = this.head
+    this.size = 0
   }
 
   /**
-   * prepend a node to the doubly linked list
-   * @param value
-   * @returns the doubly linked list
-   */
-  prepend(value: number) {
-    this.head = new DoublyLinkedListNode(value, this.head)
-
-    if (this.head.next) {
-      this.head.next.previous = this.head
-    }
-
-    return this
-  }
-
-  /**
-   * append a node to the doubly linked list
-   * @param value
-   * @returns the doubly linked list
-   */
-  append(value: number) {
-    let currentNode = this.head
-    while (currentNode && currentNode.next) {
-      currentNode = currentNode.next
-    }
-
-    const newNode = new DoublyLinkedListNode(value)
-    if (currentNode) {
-      currentNode.next = newNode
-      currentNode.next.previous = currentNode
-    }
-    else {
-      this.head = newNode
-    }
-
-    return this
-  }
-
-  /**
-   * insert a node to the doubly linked list
-   * @param value
+   * Get the node at the specified index.
    * @param index
-   * @returns the doubly linked list
+   * @returns the node at the specified index, or null if the index is out of range.
    */
-  insert(value: number, index: number) {
-    if (index <= 0) {
-      return this.prepend(value)
+  get(index: number) {
+    if (index < 0 || index >= this.size) {
+      return null
     }
 
-    const newNode = new DoublyLinkedListNode(value)
-    let currentNode = this.head
-    let currentIndex = 0
-
-    while (currentNode && currentIndex !== index - 1) {
-      currentNode = currentNode.next
-      currentIndex++
-    }
-
-    if (currentNode) {
-      newNode.next = currentNode.next
-      newNode.previous = currentNode
-      currentNode.next = newNode
+    let currentNode: DoublyLinkedListNode<T>
+    if (index < this.size - index - 1) {
+      currentNode = this.head
+      for (let i = 0; i <= index; i++) {
+        currentNode = currentNode.next as DoublyLinkedListNode<T>
+      }
     }
     else {
-      this.append(value)
+      currentNode = this.tail
+      for (let i = 0; i < this.size - index; i++) {
+        currentNode = currentNode.previous as DoublyLinkedListNode<T>
+      }
     }
 
-    return this
+    return currentNode
   }
 
   /**
-   * find a node in the doubly linked list
+   * Add a new node to the head of the list.
    * @param value
-   * @returns the node if found else null
+   */
+  addAtHead(value: T) {
+    this.addAtIndex(0, value)
+  }
+
+  /**
+   * Add a new node to the tail of the list.
+   * @param value
+   */
+  addAtTail(value: T) {
+    this.addAtIndex(this.size, value)
+  }
+
+  /**
+   * Add a new node to the list at the specified index.
+   * @param index
+   * @param value
+   */
+  addAtIndex(index: number, value: T) {
+    if (index < 0 || index > this.size) {
+      return
+    }
+
+    let prev: DoublyLinkedListNode<T>, found: DoublyLinkedListNode<T>
+
+    if (index === this.size) {
+      found = this.tail
+      prev = this.tail.previous as DoublyLinkedListNode<T>
+    }
+    else {
+      found = this.get(index) as DoublyLinkedListNode<T>
+      prev = found.previous as DoublyLinkedListNode<T>
+    }
+
+    const newNode = new DoublyLinkedListNode(value)
+    newNode.previous = prev
+    newNode.next = found
+    prev.next = newNode
+    found.previous = newNode
+    this.size++
+  }
+
+  /**
+   * Delete the node at the specified index.
+   * @param index
+   */
+  deleteAtIndex(index: number) {
+    if (index < 0 || index >= this.size) {
+      return
+    }
+
+    const found = this.get(index) as DoublyLinkedListNode<T>
+    const prev = found.previous as DoublyLinkedListNode<T>
+
+    prev.next = found.next
+    if (found.next) {
+      found.next.previous = prev
+    }
+    this.size--
+  }
+
+  /**
+   * Find the node with the specified value.
+   * @param value
+   * @returns the node with the specified value, or null if the value is not found.
    */
   find(value: number) {
-    let currentNode = this.head
+    let currentNode = this.head.next
 
-    while (currentNode) {
-      if (currentNode.value === value) {
-        return currentNode
-      }
+    while (currentNode !== null && currentNode.value !== value) {
       currentNode = currentNode.next
     }
 
-    return null
+    return currentNode
   }
 
   /**
-   * delete nodes from the doubly linked list
+   * Delete the first occurrence of the specified value from the list.
    * @param value
-   * @returns the doubly linked list
    */
-  delete(value: number) {
-    while (this.head && this.head.value === value) {
-      this.head = this.head.next
+  deleteValue(value: number) {
+    let prevNode: DoublyLinkedListNode<T> | null = null
+    let currentNode: DoublyLinkedListNode<T> | null = this.head
+
+    while (currentNode !== null && currentNode.value !== value) {
+      prevNode = currentNode
+      currentNode = currentNode.next
     }
 
-    if (!this.head) {
-      return this
-    }
-
-    this.head.previous = null
-
-    let prevNode: DoublyLinkedListNode | null = this.head
-    let currentNode: DoublyLinkedListNode | null = this.head?.next || null
-
-    while (currentNode) {
-      if (currentNode.value === value) {
+    if (currentNode) {
+      if (prevNode) {
         prevNode.next = currentNode.next
-        if (prevNode.next) {
-          prevNode.next.previous = prevNode
-        }
-        currentNode = prevNode.next
       }
       else {
-        prevNode = currentNode
-        currentNode = currentNode.next
+        this.head.next = currentNode.next
       }
-    }
 
-    return this
+      currentNode.previous!.next = currentNode.next
+      currentNode.next!.previous = currentNode.previous
+      this.size--
+    }
   }
 
-  /**
-   * delete the head of the doubly linked list
-   * @returns the doubly linked list
-   */
-  deleteHead() {
-    if (!this.head) {
-      return this
-    }
-
-    this.head = this.head.next
-
-    if (this.head) {
-      this.head.previous = null
-
-      if (this.head.next) {
-        this.head.next.previous = this.head
-      }
-    }
-
-    return this
-  }
-
-  /**
-   * convert the doubly linked list to a string
-   * @returns the string representation of the doubly linked list nodes
-   */
   toString() {
-    const arr = []
-    let currentNode = this.head
+    const arr: LinkedListNode<T>[] = []
 
-    while (currentNode) {
-      arr.push(currentNode.toString())
+    let currentNode = this.head
+    while (currentNode.next && currentNode.next.value !== null) {
+      arr.push(currentNode.next)
       currentNode = currentNode.next
     }
-
-    return arr.join(',')
+    return arr.map(v => v.toString()).join(',')
   }
 }

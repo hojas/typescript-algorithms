@@ -45,7 +45,7 @@ function heapify(nums: number[], n: number, i: number) {
   if (largest !== i) {
     [nums[i], nums[largest]] = [nums[largest], nums[i]] // swap
 
-    // Recursively heapify the affected sub-tree
+    // Recursively heapify the affected sub-4-tree
     heapify(nums, n, largest)
   }
 }

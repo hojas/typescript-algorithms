@@ -1,10 +1,10 @@
-export class LinkedListNode {
-  value: number
-  next: LinkedListNode | null
+export class LinkedListNode<T> {
+  value: T | null
+  next: LinkedListNode<T> | null
 
-  constructor(value?: number, next?: LinkedListNode | null) {
-    this.value = value === undefined ? 0 : value
-    this.next = next === undefined ? null : next
+  constructor(value: T | null = null) {
+    this.value = value
+    this.next = null
   }
 
   toString() {
@@ -12,149 +12,128 @@ export class LinkedListNode {
   }
 }
 
-export class LinkedList {
-  head: LinkedListNode | null
+export class LinkedList<T> {
+  head: LinkedListNode<T>
+  size: number
 
-  constructor(head = null) {
-    this.head = head
+  constructor() {
+    this.head = new LinkedListNode()
+    this.size = 0
   }
 
   /**
-   * prepend a node to the linked list
-   * @param value
-   * @returns the linked list
-   */
-  prepend(value: number) {
-    this.head = new LinkedListNode(value, this.head)
-    return this
-  }
-
-  /**
-   * append a node to the linked list
-   * @param value
-   * @returns the linked list
-   */
-  append(value: number) {
-    const newNode = new LinkedListNode(value)
-
-    let lastNode = this.head
-
-    if (lastNode) {
-      while (lastNode.next) {
-        lastNode = lastNode.next
-      }
-      lastNode.next = newNode
-    }
-    else {
-      this.head = newNode
-    }
-
-    return this
-  }
-
-  /**
-   * insert a node to the linked list
-   * @param value
+   * Get the node at the specified index.
    * @param index
-   * @returns the linked list
+   * @returns the node at the specified index, or null if the index is out of range.
    */
-  insert(value: number, index: number) {
-    if (index <= 0) {
-      return this.prepend(value)
+  get(index: number): LinkedListNode<T> | null {
+    if (index < 0 || index >= this.size) {
+      return null
     }
 
-    const newNode = new LinkedListNode(value)
     let currentNode = this.head
-    let currentIndex = 0
+    for (let i = 0; i <= index; i++) {
+      currentNode = currentNode.next as LinkedListNode<T>
+    }
 
-    while (currentNode && currentIndex !== index - 1) {
+    return currentNode
+  }
+
+  /**
+   * Add a new node to the head of the list.
+   * @param value
+   */
+  addAtHead(value: T) {
+    this.addAtIndex(0, value)
+  }
+
+  /**
+   * Add a new node to the tail of the list.
+   * @param value
+   */
+  addAtTail(value: T) {
+    this.addAtIndex(this.size, value)
+  }
+
+  /**
+   * Add a new node to the list at the specified index.
+   * @param index
+   * @param value
+   */
+  addAtIndex(index: number, value: T): void {
+    if (index >= 0 && index <= this.size) {
+      let prev: LinkedListNode<T> = this.head
+      if (index > 0) {
+        prev = this.get(index - 1) as LinkedListNode<T>
+      }
+
+      const newNode = new LinkedListNode(value)
+      newNode.next = prev.next
+      prev.next = newNode
+      this.size++
+    }
+  }
+
+  /**
+   * Delete the node at the specified index.
+   * @param index
+   */
+  deleteAtIndex(index: number) {
+    if (index >= 0 && index < this.size) {
+      let prev = this.head
+      if (index > 0) {
+        prev = this.get(index - 1) as LinkedListNode<T>
+      }
+
+      prev.next = prev.next!.next
+      this.size--
+    }
+  }
+
+  /**
+   * Find the first occurrence of the specified value in this list.
+   * @param value
+   * @returns the node containing the specified value, or null if the value is not found.
+   */
+  find(value: T): LinkedListNode<T> | null {
+    let node = this.head.next
+
+    while (node !== null && node.value !== value) {
+      node = node.next
+    }
+
+    return node
+  }
+
+  /**
+   * Delete the first occurrence of the specified value in this list.
+   * @param value
+   */
+  deleteValue(value: T) {
+    let prevNode: LinkedListNode<T> | null = null
+    let currentNode: LinkedListNode<T> | null = this.head
+
+    while (currentNode !== null && currentNode.value !== value) {
+      prevNode = currentNode
       currentNode = currentNode.next
-      currentIndex++
     }
 
     if (currentNode) {
-      newNode.next = currentNode.next
-      currentNode.next = newNode
-    }
-    else {
-      this.append(value)
-    }
-
-    return this
-  }
-
-  /**
-   * find a node from the linked list
-   * @param value
-   * @returns the node if found, otherwise null
-   */
-  find(value: number) {
-    let currentNode = this.head
-
-    while (currentNode) {
-      if (currentNode.value === value) {
-        return currentNode
-      }
-      currentNode = currentNode.next
-    }
-
-    return null
-  }
-
-  /**
-   * delete nodes from the linked list
-   * @param value
-   * @returns the linked list
-   */
-  delete(value: number) {
-    while (this.head && this.head.value === value) {
-      this.head = this.head.next
-    }
-
-    if (!this.head) {
-      return this
-    }
-
-    let prevNode: LinkedListNode | null = this.head
-    let currentNode: LinkedListNode | null = this.head?.next || null
-
-    while (currentNode) {
-      if (currentNode.value === value) {
+      if (prevNode) {
         prevNode.next = currentNode.next
-        currentNode = prevNode.next
       }
       else {
-        prevNode = currentNode
-        currentNode = currentNode.next
+        this.head.next = currentNode.next
       }
     }
-
-    return this
   }
 
-  /**
-   * delete head node from the linked list
-   * @returns the linked list
-   */
-  deleteHead() {
-    if (!this.head) {
-      return this
-    }
-
-    this.head = this.head.next
-
-    return this
-  }
-
-  /**
-   * convert the linked list to a string
-   * @returns the string representation of the linked list nodes
-   */
   toString() {
-    const arr = []
+    const arr: LinkedListNode<T>[] = []
+
     let currentNode = this.head
-    while (currentNode) {
-      arr.push(currentNode.value)
+    while (currentNode.next) {
+      arr.push(currentNode.next)
       currentNode = currentNode.next
     }
     return arr.map(v => v.toString()).join(',')

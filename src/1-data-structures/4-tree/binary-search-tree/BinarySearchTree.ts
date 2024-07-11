@@ -57,7 +57,7 @@ export class BinarySearchTreeNode extends BinaryTreeNode {
 
     // node not found
     if (!nodeToRemove)
-      throw new Error('Item not found in the tree')
+      throw new Error('Item not found in the 4-tree')
 
     const { parent } = nodeToRemove
 
