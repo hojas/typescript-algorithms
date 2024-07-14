@@ -1,119 +1,94 @@
 export class BinaryTreeNode {
-  public value: number | null
+  public value: number
   public left: BinaryTreeNode | null
   public right: BinaryTreeNode | null
-  public parent: BinaryTreeNode | null
 
-  constructor(value: number | null = null) {
+  constructor(value: number) {
     this.value = value
     this.left = null
     this.right = null
-    this.parent = null
+  }
+}
+
+/**
+ * Level order traversal of a binary tree.
+ * @param root
+ */
+export function levelOrder(root: BinaryTreeNode | null): number[][] {
+  if (!root) {
+    return []
   }
 
-  get leftHeight(): number {
-    if (!this.left)
-      return 0
+  const res: number[][] = []
+  const q = [root]
 
-    return this.left.height + 1
-  }
+  while (q.length) {
+    const len = q.length
+    const level = []
 
-  get rightHeight(): number {
-    if (!this.right)
-      return 0
+    for (let i = 0; i < len; i++) {
+      const node = q.shift() as BinaryTreeNode
+      level.push(node.value)
 
-    return this.right.height + 1
-  }
-
-  get height() {
-    return Math.max(this.leftHeight, this.rightHeight)
-  }
-
-  get balanceFactor() {
-    return this.leftHeight - this.rightHeight
-  }
-
-  static copyNode(sourceNode: BinaryTreeNode, targetNode: BinaryTreeNode) {
-    targetNode.setValue(sourceNode.value)
-    targetNode.setLeft(sourceNode.left)
-    targetNode.setRight(sourceNode.right)
-  }
-
-  setValue(value: number | null) {
-    this.value = value
-    return this
-  }
-
-  setLeft(node: BinaryTreeNode | null) {
-    if (this.left)
-      this.left.parent = null
-
-    this.left = node
-
-    if (this.left)
-      this.left.parent = this
-
-    return this
-  }
-
-  setRight(node: BinaryTreeNode | null) {
-    if (this.right)
-      this.right.parent = null
-
-    this.right = node
-
-    if (this.right)
-      this.right.parent = this
-
-    return this
-  }
-
-  removeChild(nodeToRemove: BinaryTreeNode) {
-    if (this.left && this.left === nodeToRemove) {
-      this.left = null
-      return true
+      if (node.left) {
+        q.push(node.left)
+      }
+      if (node.right) {
+        q.push(node.right)
+      }
     }
-
-    if (this.right && this.right === nodeToRemove) {
-      this.right = null
-      return true
-    }
-
-    return false
   }
 
-  replaceChild(nodeToReplace: BinaryTreeNode, replacementNode: BinaryTreeNode) {
-    if (!nodeToReplace || !replacementNode)
-      return false
+  return res
+}
 
-    if (this.left && this.left === nodeToReplace) {
-      this.left = replacementNode
-      return true
-    }
-
-    if (this.right && this.right === nodeToReplace) {
-      this.right = replacementNode
-      return true
-    }
-
-    return false
+/**
+ * Preorder traversal of a binary tree.
+ * @param root
+ * @param res
+ */
+export function preorderTraversal(root: BinaryTreeNode | null, res: number[] = []): number[] {
+  if (!root) {
+    return res
   }
 
-  traverseInOrder() {
-    let traverse: number[] = []
+  res.push(root.value)
+  preorderTraversal(root.left, res)
+  preorderTraversal(root.right, res)
 
-    if (this.left)
-      traverse = traverse.concat(this.left.traverseInOrder())
+  return res
+}
 
-    traverse.push(this.value!)
-
-    if (this.right)
-      traverse = traverse.concat(this.right.traverseInOrder())
-
-    return traverse
+/**
+ * Inorder traversal of a binary tree.
+ * @param root
+ * @param res
+ */
+export function inorderTraversal(root: BinaryTreeNode | null, res: number[] = []): number[] {
+  if (!root) {
+    return res
   }
 
-  toString() {
-    return this.traverseInOrder().toString()
+  inorderTraversal(root.left, res)
+  res.push(root.value)
+  inorderTraversal(root.right, res)
+
+  return res
+}
+
+/**
+ * Postorder traversal of a binary tree.
+ * @param root
+ * @param res
+ */
+export function postorderTraversal(root: BinaryTreeNode | null, res: number[] = []): number[] {
+  if (!root) {
+    return res
   }
+
+  postorderTraversal(root.left, res)
+  postorderTraversal(root.right, res)
+  res.push(root.value)
+
+  return res
 }
