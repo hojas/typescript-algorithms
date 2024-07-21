@@ -22,21 +22,20 @@ export function levelOrder(root: BinaryTreeNode | null): number[][] {
   const res: number[][] = []
   const q = [root]
 
-  while (q.length) {
+  while (q.length !== 0) {
     const len = q.length
-    const level = []
+    const arr: number[] = []
 
     for (let i = 0; i < len; i++) {
       const node = q.shift() as BinaryTreeNode
-      level.push(node.value)
-
-      if (node.left) {
+      arr.push(node.value)
+      if (node.left)
         q.push(node.left)
-      }
-      if (node.right) {
+      if (node.right)
         q.push(node.right)
-      }
     }
+
+    res.push(arr)
   }
 
   return res
