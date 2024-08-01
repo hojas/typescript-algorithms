@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest'
+import { BinaryTreeNode } from './BinaryTreeNode'
 import {
-  BinaryTreeNode,
   inorderTraversal,
   levelOrder,
   postorderTraversal,
   preorderTraversal,
-} from './BinaryTreeNode'
+} from './TraversalBinaryTree'
 
 function createBinaryTree() {
   const root = new BinaryTreeNode(1)
@@ -19,19 +19,6 @@ function createBinaryTree() {
 }
 
 describe('binaryTreeNode', () => {
-  it('should create node', () => {
-    const node = new BinaryTreeNode(1)
-    expect(node.value).toBe(1)
-    expect(node.left).toBeNull()
-    expect(node.right).toBeNull()
-  })
-
-  it('should level order traversal', () => {
-    const root = createBinaryTree()
-    const res = levelOrder(root)
-    expect(res).toEqual([[1], [2, 3], [4, 5, 6, 7]])
-  })
-
   it('should preorderTraversal', () => {
     const root = createBinaryTree()
     const res = preorderTraversal(root)
@@ -48,5 +35,11 @@ describe('binaryTreeNode', () => {
     const root = createBinaryTree()
     const res = postorderTraversal(root)
     expect(res).toEqual([4, 5, 2, 6, 7, 3, 1])
+  })
+
+  it('should level order traversal', () => {
+    const root = createBinaryTree()
+    const res = levelOrder(root)
+    expect(res).toEqual([[1], [2, 3], [4, 5, 6, 7]])
   })
 })
