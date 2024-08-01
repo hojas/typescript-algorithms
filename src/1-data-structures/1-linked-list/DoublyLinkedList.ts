@@ -1,20 +1,4 @@
-import type { LinkedListNode } from './LinkedList.ts'
-
-export class DoublyLinkedListNode<T> {
-  value: T | null
-  previous: DoublyLinkedListNode<T> | null
-  next: DoublyLinkedListNode<T> | null
-
-  constructor(value: T | null = null) {
-    this.value = value
-    this.previous = null
-    this.next = null
-  }
-
-  toString() {
-    return `${this.value}`
-  }
-}
+import { DoublyLinkedListNode } from './DoublyLinkedListNode'
 
 export class DoublyLinkedList<T> {
   head: DoublyLinkedListNode<T>
@@ -39,21 +23,11 @@ export class DoublyLinkedList<T> {
       return null
     }
 
-    let currentNode: DoublyLinkedListNode<T>
-    if (index < this.size - index - 1) {
-      currentNode = this.head
-      for (let i = 0; i <= index; i++) {
-        currentNode = currentNode.next as DoublyLinkedListNode<T>
-      }
+    let currentNode = this.head
+    while (index--) {
+      currentNode = currentNode.next as DoublyLinkedListNode<T>
     }
-    else {
-      currentNode = this.tail
-      for (let i = 0; i < this.size - index; i++) {
-        currentNode = currentNode.previous as DoublyLinkedListNode<T>
-      }
-    }
-
-    return currentNode
+    return currentNode.next
   }
 
   /**
@@ -83,7 +57,6 @@ export class DoublyLinkedList<T> {
     }
 
     let prev: DoublyLinkedListNode<T>, found: DoublyLinkedListNode<T>
-
     if (index === this.size) {
       found = this.tail
       prev = this.tail.previous as DoublyLinkedListNode<T>
@@ -126,44 +99,61 @@ export class DoublyLinkedList<T> {
    * @returns the node with the specified value, or null if the value is not found.
    */
   find(value: number) {
-    let currentNode = this.head.next
-
-    while (currentNode !== null && currentNode.value !== value) {
-      currentNode = currentNode.next
+    let node = this.head
+    while (node.next !== null && node.value !== value) {
+      node = node.next
     }
-
-    return currentNode
+    return node
   }
 
   /**
-   * Delete the first occurrence of the specified value from the list.
+   * Delete all occurrences of the specified value from the list.
    * @param value
    */
   deleteValue(value: number) {
-    let prevNode: DoublyLinkedListNode<T> | null = null
-    let currentNode: DoublyLinkedListNode<T> | null = this.head
+    // let prevNode: DoublyLinkedListNode<T> | null = null
+    // let currentNode: DoublyLinkedListNode<T> | null = this.head
+    //
+    // while (currentNode !== null && currentNode.value !== value) {
+    //   prevNode = currentNode
+    //   currentNode = currentNode.next
+    // }
+    //
+    // if (currentNode) {
+    //   if (prevNode) {
+    //     prevNode.next = currentNode.next
+    //   }
+    //   else {
+    //     this.head.next = currentNode.next
+    //   }
+    //
+    //   currentNode.previous!.next = currentNode.next
+    //   currentNode.next!.previous = currentNode.previous
+    //   this.size--
+    // }
 
-    while (currentNode !== null && currentNode.value !== value) {
-      prevNode = currentNode
-      currentNode = currentNode.next
-    }
+    let currentNode = this.head
+    while (currentNode.next !== null) {
+      if (currentNode.next.value === value) {
+        currentNode.next = currentNode.next.next
 
-    if (currentNode) {
-      if (prevNode) {
-        prevNode.next = currentNode.next
+        if (currentNode.next) {
+          currentNode.next.previous = currentNode
+        }
+        else {
+          this.tail.previous = currentNode
+          this.tail = currentNode
+        }
+        this.size--
       }
       else {
-        this.head.next = currentNode.next
+        currentNode = currentNode.next as DoublyLinkedListNode<T>
       }
-
-      currentNode.previous!.next = currentNode.next
-      currentNode.next!.previous = currentNode.previous
-      this.size--
     }
   }
 
   toString() {
-    const arr: LinkedListNode<T>[] = []
+    const arr: DoublyLinkedListNode<T>[] = []
 
     let currentNode = this.head
     while (currentNode.next && currentNode.next.value !== null) {

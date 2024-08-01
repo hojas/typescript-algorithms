@@ -14,7 +14,7 @@ export class BinaryTreeNode {
  * Level order traversal of a binary tree.
  * @param root
  */
-export function levelOrder(root: BinaryTreeNode | null): number[][] {
+export function levelOrder(root: BinaryTreeNode | null) {
   if (!root) {
     return []
   }
@@ -22,17 +22,20 @@ export function levelOrder(root: BinaryTreeNode | null): number[][] {
   const res: number[][] = []
   const q = [root]
 
-  while (q.length !== 0) {
+  while (q.length > 0) {
     const len = q.length
     const arr: number[] = []
 
     for (let i = 0; i < len; i++) {
       const node = q.shift() as BinaryTreeNode
       arr.push(node.value)
-      if (node.left)
+
+      if (node.left) {
         q.push(node.left)
-      if (node.right)
+      }
+      if (node.right) {
         q.push(node.right)
+      }
     }
 
     res.push(arr)
@@ -46,7 +49,7 @@ export function levelOrder(root: BinaryTreeNode | null): number[][] {
  * @param root
  * @param res
  */
-export function preorderTraversal(root: BinaryTreeNode | null, res: number[] = []): number[] {
+export function preorderTraversal(root: BinaryTreeNode | null, res: number[] = []) {
   if (!root) {
     return res
   }
@@ -63,7 +66,7 @@ export function preorderTraversal(root: BinaryTreeNode | null, res: number[] = [
  * @param root
  * @param res
  */
-export function inorderTraversal(root: BinaryTreeNode | null, res: number[] = []): number[] {
+export function inorderTraversal(root: BinaryTreeNode | null, res: number[] = []) {
   if (!root) {
     return res
   }
@@ -80,7 +83,7 @@ export function inorderTraversal(root: BinaryTreeNode | null, res: number[] = []
  * @param root
  * @param res
  */
-export function postorderTraversal(root: BinaryTreeNode | null, res: number[] = []): number[] {
+export function postorderTraversal(root: BinaryTreeNode | null, res: number[] = []) {
   if (!root) {
     return res
   }

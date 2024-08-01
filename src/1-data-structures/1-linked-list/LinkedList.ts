@@ -1,17 +1,8 @@
-export class LinkedListNode<T> {
-  value: T | null
-  next: LinkedListNode<T> | null
+import { LinkedListNode } from './LinkedListNode'
 
-  constructor(value: T | null = null) {
-    this.value = value
-    this.next = null
-  }
-
-  toString() {
-    return `${this.value}`
-  }
-}
-
+/**
+ * Linked List implementation in TypeScript.
+ */
 export class LinkedList<T> {
   head: LinkedListNode<T>
   size: number
@@ -32,11 +23,10 @@ export class LinkedList<T> {
     }
 
     let currentNode = this.head
-    for (let i = 0; i <= index; i++) {
+    while (index--) {
       currentNode = currentNode.next as LinkedListNode<T>
     }
-
-    return currentNode
+    return currentNode.next
   }
 
   /**
@@ -61,17 +51,19 @@ export class LinkedList<T> {
    * @param value
    */
   addAtIndex(index: number, value: T): void {
-    if (index >= 0 && index <= this.size) {
-      let prev: LinkedListNode<T> = this.head
-      if (index > 0) {
-        prev = this.get(index - 1) as LinkedListNode<T>
-      }
-
-      const newNode = new LinkedListNode(value)
-      newNode.next = prev.next
-      prev.next = newNode
-      this.size++
+    if (index < 0 || index > this.size) {
+      return
     }
+
+    let prev: LinkedListNode<T> = this.head
+    if (index > 0) {
+      prev = this.get(index - 1) as LinkedListNode<T>
+    }
+
+    const newNode = new LinkedListNode(value)
+    newNode.next = prev.next
+    prev.next = newNode
+    this.size++
   }
 
   /**
@@ -79,15 +71,17 @@ export class LinkedList<T> {
    * @param index
    */
   deleteAtIndex(index: number) {
-    if (index >= 0 && index < this.size) {
-      let prev = this.head
-      if (index > 0) {
-        prev = this.get(index - 1) as LinkedListNode<T>
-      }
-
-      prev.next = prev.next!.next
-      this.size--
+    if (index < 0 || index >= this.size) {
+      return
     }
+
+    let prev = this.head
+    if (index > 0) {
+      prev = this.get(index - 1) as LinkedListNode<T>
+    }
+
+    prev.next = prev.next!.next
+    this.size--
   }
 
   /**
@@ -96,34 +90,25 @@ export class LinkedList<T> {
    * @returns the node containing the specified value, or null if the value is not found.
    */
   find(value: T): LinkedListNode<T> | null {
-    let node = this.head.next
-
-    while (node !== null && node.value !== value) {
+    let node = this.head
+    while (node.next !== null && node.value !== value) {
       node = node.next
     }
-
     return node
   }
 
   /**
-   * Delete the first occurrence of the specified value in this list.
+   * Delete all occurrences of the specified value in this list.
    * @param value
    */
   deleteValue(value: T) {
-    let prevNode: LinkedListNode<T> | null = null
-    let currentNode: LinkedListNode<T> | null = this.head
-
-    while (currentNode !== null && currentNode.value !== value) {
-      prevNode = currentNode
-      currentNode = currentNode.next
-    }
-
-    if (currentNode) {
-      if (prevNode) {
-        prevNode.next = currentNode.next
+    let prevNode = this.head
+    while (prevNode.next) {
+      if (prevNode.next.value === value) {
+        prevNode.next = prevNode.next.next
       }
       else {
-        this.head.next = currentNode.next
+        prevNode = prevNode.next as LinkedListNode<T>
       }
     }
   }
