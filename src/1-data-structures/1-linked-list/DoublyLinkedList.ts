@@ -111,27 +111,6 @@ export class DoublyLinkedList<T> {
    * @param value
    */
   deleteValue(value: number) {
-    // let prevNode: DoublyLinkedListNode<T> | null = null
-    // let currentNode: DoublyLinkedListNode<T> | null = this.head
-    //
-    // while (currentNode !== null && currentNode.value !== value) {
-    //   prevNode = currentNode
-    //   currentNode = currentNode.next
-    // }
-    //
-    // if (currentNode) {
-    //   if (prevNode) {
-    //     prevNode.next = currentNode.next
-    //   }
-    //   else {
-    //     this.head.next = currentNode.next
-    //   }
-    //
-    //   currentNode.previous!.next = currentNode.next
-    //   currentNode.next!.previous = currentNode.previous
-    //   this.size--
-    // }
-
     let currentNode = this.head
     while (currentNode.next !== null) {
       if (currentNode.next.value === value) {
