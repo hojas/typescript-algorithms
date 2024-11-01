@@ -1,57 +1,110 @@
 /**
- * Bucket Sort
- * 桶排序
+ * Bucket Sort 桶排序
  *
- * O(n+k)
- * Stable
+ * 基本思想：
+ * 1. 将数组分到有限数量的桶中
+ * 2. 对每个桶进行排序
+ * 3. 合并所有桶
  *
- *
- * @param nums
+ * 时间复杂度: O(n+k)，其中n是元素个数，k是桶的数量
+ * 空间复杂度: O(n+k)
+ * 稳定性: 稳定
  */
 export function bucketSort(nums: number[]): number[] {
-  const len = nums.length
-
-  if (len <= 1) {
+  // 处理边界情况：空数组或单元素数组直接返回
+  if (nums.length <= 1)
     return nums
+
+  // 找出数组的最小值和最大值，用于确定桶的范围
+  const [minValue, maxValue] = findMinMax(nums)
+
+  // 计算桶的数量和大小
+  // bucketCount：通常取数组长度，可以根据实际情况调整
+  // bucketSize：每个桶的取值范围大小
+  const bucketCount = nums.length
+  const bucketSize = (maxValue - minValue) / bucketCount + 1
+
+  // 创建桶并将元素分配到对应的桶中
+  const buckets = createBuckets(nums, bucketSize, minValue, bucketCount)
+
+  // 对每个非空桶进行排序
+  sortBuckets(buckets)
+
+  // 合并所有桶中的元素，得到最终排序结果
+  return mergeBuckets(buckets)
+}
+
+/**
+ * 找出数组中的最小值和最大值
+ * @param nums 输入数组
+ * @returns [最小值, 最大值]的元组
+ */
+function findMinMax(nums: number[]): [number, number] {
+  let min = nums[0]
+  let max = nums[0]
+
+  // 遍历数组找出最小值和最大值
+  for (let i = 1; i < nums.length; i++) {
+    if (nums[i] < min)
+      min = nums[i]
+    if (nums[i] > max)
+      max = nums[i]
   }
 
-  let minValue = nums[0]
-  let maxValue = nums[0]
-  for (let i = 1; i < len; i++) {
-    minValue = Math.min(minValue, nums[i])
-    maxValue = Math.max(maxValue, nums[i])
+  return [min, max]
+}
+
+/**
+ * 创建桶并将元素分配到对应的桶中
+ * @param nums 输入数组
+ * @param bucketSize 每个桶的大小范围
+ * @param minValue 数组最小值
+ * @param bucketCount 桶的数量
+ * @returns 分配好元素的桶数组
+ */
+function createBuckets(
+  nums: number[],
+  bucketSize: number,
+  minValue: number,
+  bucketCount: number,
+): number[][] {
+  // 创建指定数量的空桶
+  const buckets: number[][] = Array.from(
+    { length: bucketCount },
+    () => [],
+  )
+
+  // 将每个元素分配到对应的桶中
+  for (const num of nums) {
+    // 计算元素应该放入哪个桶
+    const index = Math.floor((num - minValue) / bucketSize)
+    // 处理边界情况，防止index越界
+    const bucketIndex = Math.min(index, bucketCount - 1)
+    buckets[bucketIndex].push(num)
   }
 
-  // Create buckets
-  // 创建桶
-  const bucketSize = Math.floor((maxValue - minValue) / len) + 1
-  const bucketCount = Math.floor((maxValue - minValue) / bucketSize) + 1
-  const buckets = Array(bucketCount)
-  for (let i = 0; i < buckets.length; i++) {
-    buckets[i] = []
-  }
+  return buckets
+}
 
-  // Divide the range of input values into k equal-sized buckets
-  // 将数组元素分配到各个桶中
-  for (let i = 0; i < len; i++) {
-    const index = Math.floor((nums[i] - minValue) / bucketSize)
-    buckets[index].push(nums[i])
-  }
-
-  // Sort each bucket using any sorting algorithm
-  // 对各个桶执行排序
+/**
+ * 对每个非空桶进行排序
+ * @param buckets 桶数组
+ */
+function sortBuckets(buckets: number[][]): void {
+  // 对每个非空桶使用内置排序算法进行排序
   for (const bucket of buckets) {
-    bucket.sort((a: number, b: number) => a - b)
-  }
-
-  // Merge the sorted buckets into a single array
-  // 遍历桶合并结果
-  let i = 0
-  for (const bucket of buckets) {
-    for (const n of bucket) {
-      nums[i++] = n
+    if (bucket.length > 0) {
+      bucket.sort((a, b) => a - b)
     }
   }
+}
 
-  return nums
+/**
+ * 合并所有桶中的元素
+ * @param buckets 已排序的桶数组
+ * @returns 最终排序结果
+ */
+function mergeBuckets(buckets: number[][]): number[] {
+  // 使用flat()方法将二维数组压平成一维数组
+  return buckets.flat()
 }
